@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Mi Negocio",
+    "slug": "mi-negocio",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.matiudev.minegocio"
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "owner": "matiudev",
+    "plugins": [
+      "@react-native-community/datetimepicker"
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "enabled": true,
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD",
+      "url": "9d0fa7bd-c0e5-495f-9136-33bf88b373e0"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9d0fa7bd-c0e5-495f-9136-33bf88b373e0"
+      }
+    }
+  }
+}
