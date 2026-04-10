@@ -38,7 +38,7 @@
       "enabled": true,
       "fallbackToCacheTimeout": 0,
       "checkAutomatically": "ON_LOAD",
-      "url": "9d0fa7bd-c0e5-495f-9136-33bf88b373e0"
+      "url": "https://u.expo.dev/9d0fa7bd-c0e5-495f-9136-33bf88b373e0"
     },
     "extra": {
       "eas": {
