@@ -1,4 +1,5 @@
 import { View, Text, FlatList } from "react-native";
+import { useMemo } from "react";
 import { useTheme } from "@/theme/useTheme";
 import { useVentasStore } from "@/feature/ventas/useVentasStore";
 import { CeroItems } from "@/components/ui/CeroItems";
@@ -9,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 const ActividadReciente = () => {
   const { colors } = useTheme();
   const ventas = useVentasStore((state) => state.getVentasOrdenadas());
+  const ventasPendientes = useMemo(() => ventas.filter((v) => !v.pagado), [ventas]);
   const navigation = useNavigation();
 
   return (
@@ -33,7 +35,7 @@ const ActividadReciente = () => {
       </View>
 
       <FlatList
-        data={ventas}
+        data={ventasPendientes}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <ListarVentas venta={item} />}
         ListEmptyComponent={

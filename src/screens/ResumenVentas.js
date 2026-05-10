@@ -1,6 +1,6 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import React, { useMemo, useState } from "react";
-import { X, PackageSearch, ShoppingBag, ChevronDown, BadgeCheck, Hourglass } from "lucide-react-native";
+import { X, PackageSearch, ShoppingBag, ChevronDown, BadgeCheck, Hourglass, Eye, EyeOff } from "lucide-react-native";
 import Header from "@/components/ui/Header";
 import { ContainerStack } from "@/components/ui/Containers";
 import { useVentasStore } from "@/feature/ventas/useVentasStore";
@@ -48,44 +48,45 @@ const ResumenVentas = () => {
   const { colors } = useTheme();
   const ventas = useVentasStore((state) => state.getVentasOrdenadas());
 
-  console.log(ventas);
-
   const [clienteFiltro, setClienteFiltro] = useState(null);
   const [fechaDesde, setFechaDesde] = useState(null);
   const [fechaHasta, setFechaHasta] = useState(null);
+  const [mostrarPagadas, setMostrarPagadas] = useState(false);
 
   const [modalClienteVisible, setModalClienteVisible] = useState(false);
   const [modalFechaVisible, setModalFechaVisible] = useState(false);
 
-  // ── Ventas filtradas ──────────────────────────────────────────────────────
-  const ventasFiltradas = useMemo(() => {
+  // ── Base filtrada por cliente y fecha (para la tarjeta de totales) ────────
+  const ventasBase = useMemo(() => {
     return ventas.filter((v) => {
-      // Filtro cliente
       if (clienteFiltro && v.id_cliente !== clienteFiltro.id) return false;
-
-      // Filtro fecha
       const fechaVenta = v.fecha.slice(0, 10);
       if (fechaDesde && fechaVenta < fechaFormateada(fechaDesde)) return false;
       if (fechaHasta && fechaVenta > fechaFormateada(fechaHasta)) return false;
-
       return true;
     });
   }, [ventas, clienteFiltro, fechaDesde, fechaHasta]);
 
-  // ── Montos filtrados ──────────────────────────────────────────────────────
+  // ── Lista: aplica además el filtro de pagado ──────────────────────────────
+  const ventasFiltradas = useMemo(
+    () => mostrarPagadas ? ventasBase : ventasBase.filter((v) => !v.pagado),
+    [ventasBase, mostrarPagadas]
+  );
+
+  // ── Montos: siempre sobre ventasBase para reflejar la realidad financiera ─
   const montoTotal = useMemo(
-    () => ventasFiltradas.reduce((acc, v) => acc + (v.monto ?? 0), 0),
-    [ventasFiltradas]
+    () => ventasBase.reduce((acc, v) => acc + (v.monto ?? 0), 0),
+    [ventasBase]
   );
 
   const montoPagado = useMemo(
-    () => ventasFiltradas.filter(v => v.pagado).reduce((acc, v) => acc + (v.monto ?? 0), 0),
-    [ventasFiltradas]
+    () => ventasBase.filter((v) => v.pagado).reduce((acc, v) => acc + (v.monto ?? 0), 0),
+    [ventasBase]
   );
 
   const montoPendiente = useMemo(
-    () => ventasFiltradas.filter(v => !v.pagado).reduce((acc, v) => acc + (v.monto ?? 0), 0),
-    [ventasFiltradas]
+    () => ventasBase.filter((v) => !v.pagado).reduce((acc, v) => acc + (v.monto ?? 0), 0),
+    [ventasBase]
   );
 
   // ── Label del filtro fecha ────────────────────────────────────────────────
@@ -128,7 +129,7 @@ const ResumenVentas = () => {
         </View>
 
         <Text style={{ color: colors.button_text, opacity: 0.7, fontSize: 13, marginTop: 6 }}>
-          {ventasFiltradas.length} venta{ventasFiltradas.length !== 1 ? "s" : ""}
+          {ventasBase.length} venta{ventasBase.length !== 1 ? "s" : ""}
         </Text>
       </View>
 
@@ -153,6 +154,26 @@ const ResumenVentas = () => {
           onClear={() => { setFechaDesde(null); setFechaHasta(null); }}
           colors={colors}
         />
+        <TouchableOpacity
+          onPress={() => setMostrarPagadas(!mostrarPagadas)}
+          className="flex-row items-center gap-1.5 py-2 px-3 rounded-xl border-2"
+          style={{
+            borderColor: mostrarPagadas ? colors.button_accent : colors.text + "30",
+            backgroundColor: mostrarPagadas ? colors.button_accent + "18" : "transparent",
+          }}
+        >
+          {mostrarPagadas
+            ? <EyeOff size={14} color={colors.button_accent} />
+            : <Eye size={14} color={colors.textPlaceHolder} />
+          }
+          <Text style={{
+            fontSize: 13,
+            fontWeight: mostrarPagadas ? "600" : "400",
+            color: mostrarPagadas ? colors.button_accent : colors.textPlaceHolder,
+          }}>
+            {mostrarPagadas ? "Todas" : "Pendientes"}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* ── Lista de ventas ── */}
@@ -162,8 +183,14 @@ const ResumenVentas = () => {
         renderItem={({ item }) => <ListarVentas venta={item} mostrarPago={true} />}
         ListEmptyComponent={
           <CeroItems
-            titulo="Sin ventas registradas"
-            subtitulo={clienteFiltro || hayFiltroFecha ? "No hay ventas con estos filtros" : "Presione + para registrar"}
+            titulo={mostrarPagadas ? "Sin ventas registradas" : "Sin ventas pendientes"}
+            subtitulo={
+              !mostrarPagadas
+                ? "Todas las ventas están pagadas"
+                : clienteFiltro || hayFiltroFecha
+                ? "No hay ventas con estos filtros"
+                : "Presione + para registrar"
+            }
             Icon={PackageSearch}
           />
         }
