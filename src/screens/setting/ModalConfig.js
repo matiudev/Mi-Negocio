@@ -1,4 +1,4 @@
-import { Trash, X, CloudDownload, Cog } from "lucide-react-native";
+import { Trash, X, CloudDownload, Cog, FlaskConical } from "lucide-react-native";
 import { View, TouchableOpacity, Text, Alert, Modal } from "react-native";
 import { useState } from "react";
 import { useTheme } from "@/theme/useTheme";
@@ -6,6 +6,7 @@ import * as Updates from "expo-updates";
 import { useVentasStore } from "@/feature/ventas/useVentasStore";
 import { useProductosStore } from "@/feature/productos/useProductosStore";
 import { useClientesStore } from "@/feature/clientes/useClientesStore";
+// import { cargarDatosDemo } from "@/utils/seedData";
 
 const ModalConfig = ({ visibleModalConfig, onClose }) => {
   const { colors } = useTheme();
@@ -89,6 +90,17 @@ const ModalConfig = ({ visibleModalConfig, onClose }) => {
     await useClientesStore.getState().removeAllClientes();
   };
 
+  // const confirmarDatosDemo = () => {
+  //   Alert.alert(
+  //     "Cargar datos demo",
+  //     "Esto reemplazará todos los datos actuales con datos de ejemplo. ¿Continuar?",
+  //     [
+  //       { text: "Cancelar", style: "cancel" },
+  //       { text: "Cargar", onPress: cargarDatosDemo },
+  //     ],
+  //   );
+  // };
+
   const FUNCIONES = [
     {
       label: isChecking
@@ -100,6 +112,12 @@ const ModalConfig = ({ visibleModalConfig, onClose }) => {
       onPress: checkUpdateOTA,
       disabled: isChecking || isDownloading,
     },
+    // {
+    //   label: "Cargar datos demo",
+    //   Icon: FlaskConical,
+    //   onPress: confirmarDatosDemo,
+    //   disabled: false,
+    // },
     {
       label: "Borrar Datos",
       Icon: Trash,

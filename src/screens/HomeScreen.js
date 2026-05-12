@@ -9,7 +9,7 @@ import { ActividadReciente } from "@/feature/dashboard";
 const HomeScreen = () => {
   return (
     <ContainerTabs>
-      <Header titulo="Bienvenida de vuelta, Anita"/>
+      <Header titulo="Bienvenida de vuelta, Nicole"/>
       <View className="py-8">
       <VentasTotalesMes />
       </View>
